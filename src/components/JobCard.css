@@ -2,8 +2,8 @@
   background: white;
   border: 2px solid #e1e5e9;
   border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 12px;
+  padding: 10px; /* Further reduced from 12px for more compact layout */
+  margin-bottom: 6px; /* Further reduced from 8px for more compact layout */
   cursor: grab;
   transition: all 0.2s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -30,14 +30,14 @@
 .job-card h3 {
   margin: 0 0 8px 0;
   color: #333;
-  font-size: 16px;
+  font-size: 15px; /* Slightly smaller font for better space utilization */
   font-weight: 600;
 }
 
 .job-card p {
   margin: 0;
   color: #666;
-  font-size: 14px;
+  font-size: 13px; /* Slightly smaller description text */
   line-height: 1.4;
 }
 
@@ -93,4 +93,33 @@
   border-color: #667eea;
   color: #667eea;
   background: rgba(102, 126, 234, 0.05);
+}
+
+/* Ensure ranked jobs can display all 12 items */
+.ranked-jobs-section {
+  min-height: 650px; /* Increased height to accommodate 12 job cards */
+}
+
+/* Style for when many jobs are in the ranked area */
+.ranked-jobs {
+  scrollbar-width: thin;
+  scrollbar-color: #667eea #f1f1f1;
+}
+
+.ranked-jobs::-webkit-scrollbar {
+  width: 6px;
+}
+
+.ranked-jobs::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.ranked-jobs::-webkit-scrollbar-thumb {
+  background: #667eea;
+  border-radius: 3px;
+}
+
+.ranked-jobs::-webkit-scrollbar-thumb:hover {
+  background: #5a67d8;
 }

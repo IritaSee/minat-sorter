@@ -8,19 +8,19 @@ interface CompletionPageProps {
 }
 
 export const CompletionPage: React.FC<CompletionPageProps> = ({ preferences, onStartOver }) => {
-  const downloadData = () => {
-    const dataStr = JSON.stringify(preferences, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(dataBlob);
+  // const downloadData = () => {
+  //   const dataStr = JSON.stringify(preferences, null, 2);
+  //   const dataBlob = new Blob([dataStr], { type: 'application/json' });
+  //   const url = URL.createObjectURL(dataBlob);
     
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${preferences.studentInfo.name}_preferences_${new Date().toISOString().split('T')[0]}.json`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  };
+  //   const link = document.createElement('a');
+  //   link.href = url;
+  //   link.download = `${preferences.studentInfo.name}_preferences_${new Date().toISOString().split('T')[0]}.json`;
+  //   document.body.appendChild(link);
+  //   link.click();
+  //   document.body.removeChild(link);
+  //   URL.revokeObjectURL(url);
+  // };
 
   return (
     <div className="completion-container">
@@ -62,9 +62,9 @@ export const CompletionPage: React.FC<CompletionPageProps> = ({ preferences, onS
         </div>
 
         <div className="completion-actions">
-          <button className="download-button" onClick={downloadData}>
-            Unduh Data
-          </button>
+          {/* <button className="download-button">
+            Simpan Data
+          </button> */}
           <button className="restart-button" onClick={onStartOver}>
             Mulai Survei Baru
           </button>

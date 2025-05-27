@@ -1,6 +1,7 @@
 const express = require('express');
-const mysql = require('mysql2/promise');
 const cors = require('cors');
+const { MongoClient, ObjectId } = require('mongodb');
+require('dotenv').config();
 
 const app = express();
 const PORT = 5000;
@@ -8,40 +9,21 @@ const PORT = 5000;
 app.use(cors()); 
 app.use(express.json()); 
 
+const uri = process.env.MONGODB_URI;
+let client;
 let db;
+let studentsCollection;
+let jobPreferencesCollection;
+
 
 async function init() {
-  db = await mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'minat_sorter'
-  });
+  client = new MongoClient(uri);
+  await client.connect();
+  console.log('✅ Connected to MongoDB Atlas!');
 
-  console.log('✅ Connected to MySQL!');
-
-  await db.query(`
-    CREATE TABLE IF NOT EXISTS students (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      name VARCHAR(100),
-      gender VARCHAR(10),
-      school_name VARCHAR(255),
-      custom_school_name VARCHAR(255),
-      submitted_at DATETIME
-    )
-  `);
-  console.log('✅ Table students ready.');
-
-  await db.query(`
-    CREATE TABLE IF NOT EXISTS job_preferences (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      student_id INT,
-      set_id VARCHAR(10),
-      ranked_jobs JSON,
-      FOREIGN KEY (student_id) REFERENCES students(id)
-    )
-  `);
-  console.log('✅ Table job_preferences ready.');
+  db = client.db('minat_sorter'); 
+  studentsCollection = db.collection('students');
+  jobPreferencesCollection = db.collection('job_preferences');
 
   app.listen(PORT, () => console.log(`🚀 Server running at http://localhost:${PORT}`));
 }
@@ -51,23 +33,23 @@ app.post('/api/submit-student', async (req, res) => {
   const { name, gender, schoolName, customSchoolName } = studentInfo;
 
   try {
-    const [studentResult] = await db.query(
-      `INSERT INTO students (name, gender, school_name, custom_school_name, submitted_at) VALUES (?, ?, ?, ?, ?)`,
-      [name, gender, schoolName, customSchoolName, submittedAt]
-    );
+    const studentResult = await studentsCollection.insertOne({
+      name,
+      gender,
+      schoolName,
+      customSchoolName,
+      submittedAt: new Date(submittedAt)
+    });
 
-    const studentId = studentResult.insertId;
+    const studentId = studentResult.insertedId;
 
-    const values = jobPreferences.map(pref => [
+    const prefsToInsert = jobPreferences.map(pref => ({
       studentId,
-      pref.setId,
-      JSON.stringify(pref.rankedJobs)
-    ]);
+      setId: pref.setId,
+      rankedJobs: pref.rankedJobs
+    }));
 
-    await db.query(
-      `INSERT INTO job_preferences (student_id, set_id, ranked_jobs) VALUES ?`,
-      [values]
-    );
+    await jobPreferencesCollection.insertMany(prefsToInsert);
 
     res.json({ success: true });
   } catch (error) {
@@ -80,36 +62,27 @@ app.get('/api/students/:id/references', async (req, res) => {
   const studentId = req.params.id;
 
   try {
-    const [studentRows] = await db.query(
-      `SELECT name, gender, school_name, custom_school_name, submitted_at FROM students WHERE id = ?`,
-      [studentId]
-    );
+    const student = await studentsCollection.findOne({ _id: new ObjectId(studentId) });
 
-    if (studentRows.length === 0) {
-      return res.status(404).json({ error: 'Student not found' });
-    }
+    if (!student) return res.status(404).json({ error: 'Student not found' });
 
-    const student = studentRows[0];
+    const preferencesCursor = jobPreferencesCollection.find({ studentId: student._id });
+    const preferences = await preferencesCursor.toArray();
 
-    const [preferenceRows] = await db.query(
-      `SELECT set_id, ranked_jobs FROM job_preferences WHERE student_id = ?`,
-      [studentId]
-    );
-
-    const preferences = preferenceRows.map(pref => ({
-      setId: pref.set_id,
-      rankedJobs: JSON.parse(pref.ranked_jobs)
+    const formattedPrefs = preferences.map(pref => ({
+      setId: pref.setId,
+      rankedJobs: pref.rankedJobs
     }));
 
     res.json({
       studentInfo: {
         name: student.name,
         gender: student.gender,
-        schoolName: student.school_name,
-        customSchoolName: student.custom_school_name,
+        schoolName: student.schoolName,
+        customSchoolName: student.customSchoolName
       },
-      jobPreferences: preferences,
-      submittedAt: student.submitted_at,
+      jobPreferences: formattedPrefs,
+      submittedAt: student.submittedAt,
       success: true
     });
   } catch (error) {
@@ -119,13 +92,13 @@ app.get('/api/students/:id/references', async (req, res) => {
 
 app.get('/api/students', async (req, res) => {
   try {
-    const [rows] = await db.query(`
-      SELECT id, name, gender, school_name AS schoolName, custom_school_name AS customSchoolName, submitted_at AS submittedAt
-      FROM students
-      ORDER BY submitted_at DESC
-    `);
+    const students = await studentsCollection
+      .find()
+      .sort({ submittedAt: -1 })
+      .project({ name: 1, gender: 1, schoolName: 1, customSchoolName: 1, submittedAt: 1 })
+      .toArray();
 
-    res.json(rows);
+    res.json(students);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

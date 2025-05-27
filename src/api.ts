@@ -5,7 +5,7 @@ export const savePreferencesToDatabase = async (preferences: StudentPreferences)
   const api = import.meta.env.VITE_API_URL;
 
   try {
-    const response = await axios.post(`${api}/submit`, preferences, {
+    const response = await axios.post(`${api}/submit-student`, preferences, {
       headers: {
         'Content-Type': 'application/json'
       }

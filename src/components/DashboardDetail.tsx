@@ -58,8 +58,6 @@ export function DashboardDetail() {
     if (error) return <p style={{ color: 'red' }}>{error}</p>;
     if (!student) return null;
     
-    console.log(student);
-
     return (
         <div className="dashboard-detail-container">
             <button

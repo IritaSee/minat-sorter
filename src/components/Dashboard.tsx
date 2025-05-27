@@ -95,7 +95,7 @@ export function Dashboard() {
                   <td data-label="Aksi">
                     <button
                       onClick={() => {
-                        window.location.href = `/dashboard/student-answer/${s.id}`;
+                        window.location.href = `/dashboard/student-answer/${s._id}`;
                       }}
                     >
                       Lihat

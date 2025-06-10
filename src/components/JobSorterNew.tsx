@@ -46,7 +46,7 @@ export const JobSorter: React.FC<JobSorterProps> = ({
   const jobsToUse = getJobsForGender(studentGender);
   
   // State for mode toggle
-  const [isEasyMode, setIsEasyMode] = useState(false);
+  const [isEasyMode, setIsEasyMode] = useState(true);
   
   // State for drag and drop mode
   const [availableJobs, setAvailableJobs] = useState<Job[]>(jobsToUse);
@@ -140,7 +140,7 @@ export const JobSorter: React.FC<JobSorterProps> = ({
   };
 
   const handleToggleMode = () => {
-    setIsEasyMode(!isEasyMode);
+    setIsEasyMode(isEasyMode);
     // Reset states when switching modes
     if (!isEasyMode) {
       // Switching to easy mode
@@ -192,12 +192,12 @@ export const JobSorter: React.FC<JobSorterProps> = ({
     <div className="job-sorter">
       <div className="job-sorter-header">
         <div className="mode-toggle">
-          <button 
+          {/* <button 
             className={`mode-button ${!isEasyMode ? 'active' : ''}`}
             onClick={() => !isEasyMode || handleToggleMode()}
           >
             Drag & Drop
-          </button>
+          </button> */}
           <button 
             className={`mode-button ${isEasyMode ? 'active' : ''}`}
             onClick={() => isEasyMode || handleToggleMode()}

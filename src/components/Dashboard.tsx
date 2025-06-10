@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 type Student = {
   studentInfo: {
+    _id: object;
     name: string;
     gender: string;
     schoolName: string;
@@ -82,12 +83,12 @@ export function Dashboard() {
             </thead>
             <tbody>
               {students.map((s, index) => (
-                <tr key={s.id}>
+                <tr>
                   <td data-label="No">{index + 1}</td>
-                  <td data-label="Nama">{s.name}</td>
-                  <td data-label="Gender">{s.gender}</td>
+                  <td data-label="Nama">{s.studentInfo.name}</td>
+                  <td data-label="Gender">{s.studentInfo.gender}</td>
                   <td data-label="Sekolah">
-                    {s.schoolName || s.customSchoolName}
+                    {s.studentInfo.schoolName || s.studentInfo.customSchoolName}
                   </td>
                   <td data-label="Submit">
                     {new Date(s.submittedAt).toLocaleString()}
@@ -95,7 +96,7 @@ export function Dashboard() {
                   <td data-label="Aksi">
                     <button
                       onClick={() => {
-                        window.location.href = `/dashboard/student-answer/${s._id}`;
+                        navigate(`/dashboard/student-answer/${s.studentInfo._id}`);
                       }}
                     >
                       Lihat

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   DndContext,
   DragOverlay,
@@ -255,6 +255,7 @@ export const JobSorter: React.FC<JobSorterProps> = ({
                       onChange={(e) => handleRankChange(job.id, parseInt(e.target.value) || 0)}
                       placeholder="1-12"
                       className={`rank-input ${currentRank ? 'filled' : ''}`}
+                      onWheel={(e) => e.currentTarget.blur()}
                     />
                     {currentRank && (
                       <span className="rank-status">✓</span>

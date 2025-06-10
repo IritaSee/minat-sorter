@@ -140,15 +140,15 @@ export const JobSorter: React.FC<JobSorterProps> = ({
   };
 
   const handleToggleMode = () => {
-    setIsEasyMode(isEasyMode);
+    setIsEasyMode(!isEasyMode);
     // Reset states when switching modes
-    if (!isEasyMode) {
+    if (isEasyMode) {
+      // Switching to drag mode
+      setEasyModeRanks({});
+    } else {
       // Switching to easy mode
       setAvailableJobs(jobsToUse);
       setRankedJobs([]);
-      setEasyModeRanks({});
-    } else {
-      // Switching to drag mode
       setEasyModeRanks({});
     }
   };

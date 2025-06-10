@@ -28,9 +28,9 @@ type Student = {
     }[];
     submittedAt: string;
 };  
-  
+
 export function DashboardDetail() {
-    const [student, setStudent] = useState<Student[]>([]);
+    const [student, setStudent] = useState<Student | null>(null);
     const URL = import.meta.env.VITE_API_URL;
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -53,10 +53,9 @@ export function DashboardDetail() {
         fetchStudent();
     }, [id]);
     
-
     if (isLoading) return <p>Loading...</p>;
     if (error) return <p style={{ color: 'red' }}>{error}</p>;
-    if (!student) return null;
+    if (!student) return <p>Student data not found</p>;
     
     return (
         <div className="dashboard-detail-container">

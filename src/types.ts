@@ -2,7 +2,6 @@ export interface StudentInfo {
   name: string;
   gender: 'male' | 'female' | 'other';
   schoolName: string;
-  customSchoolName?: string; // For when "Lainnya" is selected
 }
 
 export interface Job {

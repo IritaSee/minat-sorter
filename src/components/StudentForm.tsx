@@ -1,7 +1,19 @@
 import React, { useState } from 'react';
 import type { StudentInfo } from '../types';
-import { SCHOOLS } from '../types';
 import './StudentForm.css';
+
+// Common school suggestions
+const COMMON_SCHOOLS = [
+  'SMPN 1 Melaya',
+  'SMPN 2 Melaya',
+  'SMPN 3 Melaya',
+  'SMPN 4 Melaya',
+  'SMPN 5 Melaya',
+  'SMA Negeri 1 Melaya',
+  'SMA Negeri 2 Melaya',
+  'SMK Negeri 1 Melaya',
+  'SMK Negeri 2 Melaya'
+];
 
 interface StudentFormProps {
   onSubmit: (studentInfo: StudentInfo) => void;
@@ -11,50 +23,70 @@ export const StudentForm: React.FC<StudentFormProps> = ({ onSubmit }) => {
   const [formData, setFormData] = useState<StudentInfo>({
     name: '',
     gender: 'male',
-    schoolName: '',
-    customSchoolName: ''
+    schoolName: ''
   });
 
-  const [errors, setErrors] = useState<Partial<StudentInfo & { customSchoolName?: string }>>({});
+  const [errors, setErrors] = useState<Partial<StudentInfo>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validation
-    const newErrors: Partial<StudentInfo & { customSchoolName?: string }> = {};
-    if (!formData.name.trim()) {
+    // Enhanced validation
+    const newErrors: Partial<StudentInfo> = {};
+    
+    // Name validation
+    const nameValue = formData.name.trim();
+    if (!nameValue) {
       newErrors.name = 'Nama harus diisi';
+    } else if (nameValue.length < 3) {
+      newErrors.name = 'Nama minimal 3 karakter';
+    } else if (nameValue.length > 50) {
+      newErrors.name = 'Nama maksimal 50 karakter';
+    } else if (!/^[a-zA-Z\s'.]+$/.test(nameValue)) {
+      newErrors.name = 'Nama hanya boleh berisi huruf, spasi, titik, dan apostrof';
     }
-    if (!formData.schoolName) {
-      newErrors.schoolName = 'Sekolah harus dipilih';
-    }
-    if (formData.schoolName === 'Lainnya' && !formData.customSchoolName?.trim()) {
-      newErrors.customSchoolName = 'Nama sekolah harus diisi';
+    
+    // School validation
+    const schoolValue = formData.schoolName.trim();
+    if (!schoolValue) {
+      newErrors.schoolName = 'Sekolah harus diisi';
+    } else if (schoolValue.length < 5) {
+      newErrors.schoolName = 'Nama sekolah terlalu pendek';
+    } else if (schoolValue.length > 100) {
+      newErrors.schoolName = 'Nama sekolah terlalu panjang';
     }
 
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      // Create final student info with proper school name
-      const finalStudentInfo: StudentInfo = {
+      // All validations passed
+      setIsSubmitting(true);
+      onSubmit({
         ...formData,
-        schoolName: formData.schoolName === 'Lainnya' ? formData.customSchoolName! : formData.schoolName
-      };
-      onSubmit(finalStudentInfo);
+        name: nameValue,
+        schoolName: schoolValue
+      });
     }
   };
 
-  const handleInputChange = (field: keyof (StudentInfo & { customSchoolName?: string }), value: string) => {
+  const handleInputChange = (field: keyof StudentInfo, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     // Clear error when user starts typing
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
     }
     
-    // Clear custom school name when changing from "Lainnya" to another option
-    if (field === 'schoolName' && value !== 'Lainnya') {
-      setFormData(prev => ({ ...prev, customSchoolName: '' }));
-      setErrors(prev => ({ ...prev, customSchoolName: undefined }));
+    // Capitalize first letter of each word for school name
+    if (field === 'schoolName' && value) {
+      const formattedValue = value
+        .split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(' ');
+      
+      if (formattedValue !== value) {
+        setFormData(prev => ({ ...prev, [field]: formattedValue }));
+      }
     }
   };
 
@@ -95,39 +127,26 @@ export const StudentForm: React.FC<StudentFormProps> = ({ onSubmit }) => {
 
           <div className="form-group">
             <label htmlFor="school">Sekolah *</label>
-            <select
+            <input
+              type="text"
               id="school"
               value={formData.schoolName}
               onChange={(e) => handleInputChange('schoolName', e.target.value)}
               className={errors.schoolName ? 'error' : ''}
-            >
-              <option value="">Pilih sekolah Anda</option>
-              {SCHOOLS.map((school) => (
-                <option key={school} value={school}>
-                  {school}
-                </option>
+              placeholder="Masukkan nama sekolah Anda"
+              list="school-suggestions"
+            />
+            <datalist id="school-suggestions">
+              {COMMON_SCHOOLS.map((school) => (
+                <option key={school} value={school} />
               ))}
-            </select>
+            </datalist>
             {errors.schoolName && <span className="error-message">{errors.schoolName}</span>}
+            <small className="helper-text">Contoh: SMPN 1 Melaya, SMA Negeri 2 Melaya</small>
           </div>
 
-          {formData.schoolName === 'Lainnya' && (
-            <div className="form-group">
-              <label htmlFor="customSchool">Nama Sekolah *</label>
-              <input
-                type="text"
-                id="customSchool"
-                value={formData.customSchoolName || ''}
-                onChange={(e) => handleInputChange('customSchoolName', e.target.value)}
-                className={errors.customSchoolName ? 'error' : ''}
-                placeholder="Masukkan nama sekolah Anda"
-              />
-              {errors.customSchoolName && <span className="error-message">{errors.customSchoolName}</span>}
-            </div>
-          )}
-
-          <button type="submit" className="submit-button">
-            Lanjutkan ke Survei
+          <button type="submit" className="submit-button" disabled={isSubmitting}>
+            {isSubmitting ? 'Sedang Mengirim...' : 'Lanjutkan ke Survei'}
           </button>
         </form>
       </div>

@@ -43,6 +43,27 @@
   font-size: 14px;
 }
 
+/* Enhanced input styling */
+.form-group input[type="text"] {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-group input[type="text"]:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.25);
+  outline: none;
+}
+
+.form-group input[type="text"].error {
+  border-color: #ff5252;
+  background-color: rgba(255, 82, 82, 0.05);
+}
+
 .form-group input,
 .form-group select {
   width: 100%;
@@ -66,42 +87,96 @@
   border-color: #e74c3c;
 }
 
-.error-message {
-  color: #e74c3c;
-  font-size: 12px;
-  margin-top: 4px;
-  display: block;
+/* Ensure consistent styling between text inputs and select dropdowns */
+.form-group select {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: white;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+  background-repeat: no-repeat;
+  background-position: right 15px center;
+  background-size: 12px;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
+/* Improved submit button */
 .submit-button {
-  width: 100%;
-  padding: 14px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
+  width: 100%;
+  padding: 14px 20px;
   border-radius: 8px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s, box-shadow 0.2s;
+  margin-top: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .submit-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
 }
 
 .submit-button:active {
-  transform: translateY(0);
+  transform: translateY(1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+.submit-button:disabled {
+  background: linear-gradient(135deg, #a9b4f0 0%, #b19ad1 100%);
+  cursor: not-allowed;
+  transform: none;
+  opacity: 0.7;
+}
+
+/* Add a loading spinner for the submit button */
+.submit-button:disabled::after {
+  content: "";
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+  margin-left: 10px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Error message styling */
+.error-message {
+  color: #ff5252;
+  font-size: 14px;
+  margin-top: 5px;
+  display: block;
+  font-weight: 500;
+}
+
+/* Helper text styling */
+.helper-text {
+  color: #666;
+  font-size: 12px;
+  margin-top: 5px;
+  display: block;
+}
+
+/* Responsive adjustments */
 @media (max-width: 600px) {
-  .student-form-container {
-    padding: 10px;
-  }
-  
   .student-form {
-    padding: 30px 20px;
+    padding: 25px 20px;
+    margin: 15px;
   }
   
   .student-form h1 {

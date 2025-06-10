@@ -9,7 +9,6 @@ type Student = {
     name: string;
     gender: string;
     schoolName: string;
-    customSchoolName: string;
   };
   jobPreferences: {
     setId: string;
@@ -88,7 +87,7 @@ export function Dashboard() {
                   <td data-label="Nama">{s.studentInfo.name}</td>
                   <td data-label="Gender">{s.studentInfo.gender}</td>
                   <td data-label="Sekolah">
-                    {s.studentInfo.schoolName || s.studentInfo.customSchoolName}
+                    {s.studentInfo.schoolName}
                   </td>
                   <td data-label="Submit">
                     {new Date(s.submittedAt).toLocaleString()}

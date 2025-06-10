@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { StudentForm } from './components/StudentForm';
-import { JobSorter } from './components/JobSorter';
+import { JobSorter } from './components/JobSorterNew';
 import { CompletionPage } from './components/CompletionPage';
 import type { StudentInfo, StudentPreferences } from './types';
 import { jobSets, savePreferencesToDatabase } from './data';

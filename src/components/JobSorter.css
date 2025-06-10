@@ -247,6 +247,11 @@
   background: #f8f9ff;
 }
 
+.easy-mode-job-item:has(.rank-input.filled) {
+  background: #f0fdf4;
+  border-color: #10b981;
+}
+
 .job-info {
   display: flex;
   align-items: center;
@@ -276,6 +281,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  position: relative;
 }
 
 .rank-input-container label {
@@ -303,6 +309,35 @@
 
 .rank-input:invalid {
   border-color: #e74c3c;
+}
+
+.rank-input.filled {
+  border-color: #10b981;
+  background-color: #f0fdf4;
+}
+
+.rank-status {
+  color: #10b981;
+  font-weight: bold;
+  font-size: 16px;
+  margin-left: 8px;
+}
+
+/* Enhanced Easy Mode styling */
+.ranking-instructions {
+  background: #f8f9ff;
+  border: 1px solid #667eea;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.ranking-instructions p {
+  margin: 0;
+  color: #667eea;
+  font-size: 14px;
+  font-weight: 500;
 }
 
 @media (max-width: 768px) {

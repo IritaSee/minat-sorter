@@ -112,10 +112,31 @@ export const JobSorter: React.FC<JobSorterProps> = ({
 
   // Easy mode handlers
   const handleRankChange = (jobId: string, rank: number) => {
-    setEasyModeRanks(prev => ({
-      ...prev,
-      [jobId]: rank
-    }));
+    setEasyModeRanks(prev => {
+      // Create a copy of the current ranks
+      const newRanks = { ...prev };
+      
+      // If rank is 0 or invalid, clear the current job's rank
+      if (rank <= 0 || rank > jobsToUse.length) {
+        delete newRanks[jobId];
+        return newRanks;
+      }
+      
+      // Find if any other job already has this rank
+      const existingJobWithRank = Object.entries(newRanks).find(
+        ([id, existingRank]) => existingRank === rank && id !== jobId
+      );
+      
+      // If another job has this rank, clear it
+      if (existingJobWithRank) {
+        delete newRanks[existingJobWithRank[0]];
+      }
+      
+      // Assign the new rank to the current job
+      newRanks[jobId] = rank;
+      
+      return newRanks;
+    });
   };
 
   const handleToggleMode = () => {
@@ -209,29 +230,39 @@ export const JobSorter: React.FC<JobSorterProps> = ({
         // Easy Mode View
         <div className="easy-mode-content">
           <h2>Isi Ranking untuk Setiap Pekerjaan</h2>
+          <div className="ranking-instructions">
+            <p>Setiap ranking (1-12) hanya dapat digunakan sekali. Jika Anda memilih ranking yang sudah digunakan, pekerjaan sebelumnya akan dikosongkan.</p>
+          </div>
           <div className="easy-mode-jobs">
-            {jobsToUse.map((job, index) => (
-              <div key={job.id} className="easy-mode-job-item">
-                <div className="job-info">
-                  <span className="job-number">{index + 1}.</span>
-                  <span className="job-title">{job.title}</span>
-                  {job.description && <span className="job-description">{job.description}</span>}
+            {jobsToUse.map((job, index) => {
+              const currentRank = easyModeRanks[job.id];
+              
+              return (
+                <div key={job.id} className="easy-mode-job-item">
+                  <div className="job-info">
+                    <span className="job-number">{index + 1}.</span>
+                    <span className="job-title">{job.title}</span>
+                    {job.description && <span className="job-description">{job.description}</span>}
+                  </div>
+                  <div className="rank-input-container">
+                    <label htmlFor={`rank-${job.id}`}>Ranking:</label>
+                    <input
+                      id={`rank-${job.id}`}
+                      type="number"
+                      min="1"
+                      max={jobsToUse.length}
+                      value={currentRank || ''}
+                      onChange={(e) => handleRankChange(job.id, parseInt(e.target.value) || 0)}
+                      placeholder="1-12"
+                      className={`rank-input ${currentRank ? 'filled' : ''}`}
+                    />
+                    {currentRank && (
+                      <span className="rank-status">✓</span>
+                    )}
+                  </div>
                 </div>
-                <div className="rank-input-container">
-                  <label htmlFor={`rank-${job.id}`}>Ranking:</label>
-                  <input
-                    id={`rank-${job.id}`}
-                    type="number"
-                    min="1"
-                    max={jobsToUse.length}
-                    value={easyModeRanks[job.id] || ''}
-                    onChange={(e) => handleRankChange(job.id, parseInt(e.target.value) || 0)}
-                    placeholder="1-12"
-                    className="rank-input"
-                  />
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       ) : (

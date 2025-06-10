@@ -17,6 +17,7 @@ function getJobTitleById(jobId: string, gender: string): string {
 
 type Student = {
     studentInfo: {
+      _id: string | object; // Added _id field to match Dashboard component
       name: string;
       gender: string;
       schoolName: string;
@@ -93,7 +94,7 @@ export function DashboardDetail() {
                 </thead>
                 <tbody>
                     {student.jobPreferences && student.jobPreferences.length > 0 ? (
-                    student.jobPreferences.map((pref: any, index: number) => {
+                    student.jobPreferences.map((pref: any) => {
                         const jobTitles = pref.rankedJobs.map((jobId: string) =>
                             getJobTitleById(jobId, student.studentInfo.gender)
                         );

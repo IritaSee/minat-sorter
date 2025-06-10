@@ -83,7 +83,7 @@ export function Dashboard() {
             </thead>
             <tbody>
               {students.map((s, index) => (
-                <tr>
+                <tr key={String(s.studentInfo._id)}>
                   <td data-label="No">{index + 1}</td>
                   <td data-label="Nama">{s.studentInfo.name}</td>
                   <td data-label="Gender">{s.studentInfo.gender}</td>

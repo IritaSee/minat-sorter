@@ -3,8 +3,12 @@ import { StudentForm } from './components/StudentForm';
 import { JobSorter } from './components/JobSorterNew';
 import { CompletionPage } from './components/CompletionPage';
 import type { StudentInfo, StudentPreferences } from './types';
-import { jobSets, savePreferencesToDatabase } from './data';
+import { jobSets } from './data';
+import { savePreferencesToDatabase } from './api';
 import './App.css'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { Dashboard } from './components/Dashboard';
+import { DashboardDetail } from './components/DashboardDetail';
 
 type AppState = 'form' | 'sorting' | 'completed';
 
@@ -73,29 +77,36 @@ function App() {
   };
 
   return (
-    <div className="app">
-      {appState === 'form' && (
-        <StudentForm onSubmit={handleStudentFormSubmit} />
-      )}
-      
-      {appState === 'sorting' && studentInfo && (
-        <JobSorter
-          jobSet={jobSets[currentSetIndex]}
-          studentGender={studentInfo.gender}
-          onComplete={handleJobSetComplete}
-          onBack={currentSetIndex > 0 || allPreferences.length > 0 ? handleBackToForm : undefined}
-          currentSet={currentSetIndex + 1}
-          totalSets={jobSets.length}
-        />
-      )}
-      
-      {appState === 'completed' && finalPreferences && (
-        <CompletionPage
-          preferences={finalPreferences}
-          onStartOver={handleStartOver}
-        />
-      )}
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={
+          <div className="app">
+            {/* tampilan form dan sorting seperti sebelumnya */}
+            {appState === 'form' && (
+              <StudentForm onSubmit={handleStudentFormSubmit} />
+            )}
+            {appState === 'sorting' && studentInfo && (
+              <JobSorter
+                jobSet={jobSets[currentSetIndex]}
+                studentGender={studentInfo.gender}
+                onComplete={handleJobSetComplete}
+                onBack={currentSetIndex > 0 ? handleBackToForm : undefined}
+                currentSet={currentSetIndex + 1}
+                totalSets={jobSets.length}
+              />
+            )}
+            {appState === 'completed' && finalPreferences && (
+              <CompletionPage
+                preferences={finalPreferences}
+                onStartOver={handleStartOver}
+              />
+            )}
+          </div>
+        } />
+        <Route path="/dashboard/student-answer" element={<Dashboard />} />
+        <Route path="/dashboard/student-answer/:id" element={<DashboardDetail />} />
+      </Routes>
+    </Router>
   );
 }
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   DndContext,
   DragOverlay,
@@ -63,6 +63,12 @@ export const JobSorter: React.FC<JobSorterProps> = ({
       },
     })
   );
+
+  useEffect(() => {
+    setAvailableJobs(jobsToUse);
+    setRankedJobs([]);
+    setEasyModeRanks({});
+  }, [jobSet]);
 
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string);

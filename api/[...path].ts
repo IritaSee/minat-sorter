@@ -16,6 +16,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Make sure we include the /api prefix when calling the backend
   const apiUrl = `${process.env.BACKEND_API_URL}/api/${apiPath}`;
   
+  // Log request details for debugging
+  console.log(`[API Proxy] Forwarding ${req.method} request: ${apiUrl}`);
+  console.log(`[API Proxy] Request body:`, req.body);
+  
   try {
     // Forward the request to your backend
     const response = await axios({
@@ -30,9 +34,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
     });
     
+    // Log successful response
+    console.log(`[API Proxy] Response received:`, {
+      status: response.status,
+      data: response.data
+    });
+    
     // Return the response from your backend
     return res.status(response.status).json(response.data);
   } catch (error: any) {
+    // Enhanced error handling with logging
+    console.error('[API Proxy] Error forwarding request:', error);
+    
+    if (error.response) {
+      console.error('[API Proxy] Backend response error:', {
+        status: error.response.status,
+        data: error.response.data
+      });
+    } else if (error.request) {
+      console.error('[API Proxy] No response received from backend');
+    } else {
+      console.error('[API Proxy] Request setup error:', error.message);
+    }
+    
     // Handle errors gracefully
     const status = error.response?.status || 500;
     const data = error.response?.data || { message: 'Internal server error' };

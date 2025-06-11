@@ -27,10 +27,31 @@ const api = axios.create({
 
 export const savePreferencesToDatabase = async (preferences: StudentPreferences): Promise<boolean> => {
   try {
+    // Log the complete URL that will be used for the request
+    const requestUrl = `${BASE_URL}/submit-student`;
+    console.log('Sending data to:', requestUrl);
+    console.log('Request payload:', JSON.stringify(preferences, null, 2));
+    
     const response = await api.post('/submit-student', preferences);
+    console.log('Response received:', response.data);
     return response.data.success === true;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Gagal mengirim ke database:', error);
+    // Enhanced error logging
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      console.error('Error response:', {
+        status: error.response.status,
+        data: error.response.data,
+        headers: error.response.headers
+      });
+    } else if (error.request) {
+      // The request was made but no response was received
+      console.error('No response received:', error.request);
+    } else {
+      // Something happened in setting up the request
+      console.error('Request setup error:', error.message);
+    }
     return false;
   }
 };

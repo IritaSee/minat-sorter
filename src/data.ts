@@ -292,17 +292,18 @@ export const jobSets: JobSet[] = [
 ];
 
 // Placeholder function for future database integration
-export const savePreferencesToDatabase = async (preferences: any): Promise<boolean> => {
+// This is now renamed to avoid conflicts with the actual API implementation
+export const savePreferencesToLocalStorage = async (preferences: any): Promise<boolean> => {
   try {
     // For now, we'll save to localStorage as a placeholder
     const savedData = JSON.parse(localStorage.getItem('studentPreferences') || '[]');
     savedData.push(preferences);
     localStorage.setItem('studentPreferences', JSON.stringify(savedData));
     
-    console.log('Preferences saved:', preferences);
+    console.log('Preferences saved to localStorage:', preferences);
     return true;
   } catch (error) {
-    console.error('Error saving preferences:', error);
+    console.error('Error saving preferences to localStorage:', error);
     return false;
   }
 };

@@ -13,8 +13,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   
   // Construct the path to your actual API
   const apiPath = Array.isArray(path) ? path.join('/') : path;
-  // Make sure we include the /api prefix when calling the backend
-  const apiUrl = `${process.env.BACKEND_API_URL}/api/${apiPath}`;
+  
+  // Log input parameters for better debugging
+  console.log(`[API Proxy] Request path: ${apiPath}`);
+  console.log(`[API Proxy] BACKEND_API_URL: ${process.env.BACKEND_API_URL}`);
+  
+  // Don't add /api prefix if BACKEND_API_URL already includes it
+  const backendUrl = process.env.BACKEND_API_URL;
+  const apiUrl = backendUrl.endsWith('/api') || backendUrl.includes('/api/') 
+    ? `${backendUrl}/${apiPath}`
+    : `${backendUrl}/api/${apiPath}`;
   
   // Log request details for debugging
   console.log(`[API Proxy] Forwarding ${req.method} request: ${apiUrl}`);

@@ -18,6 +18,20 @@ export default defineConfig(({ mode }) => {
           rewrite: (path) => path.replace(/^\/api/, '/api')
         }
       }
+    },
+    // Optimize for production builds
+    build: {
+      outDir: 'dist',
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'react-vendor': ['react', 'react-dom'],
+            'dnd-kit': ['@dnd-kit/core', '@dnd-kit/sortable', '@dnd-kit/utilities']
+          }
+        }
+      },
+      // Ensure assets are correctly handled
+      assetsDir: 'assets'
     }
   }
 })

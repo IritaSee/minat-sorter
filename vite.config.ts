@@ -14,8 +14,8 @@ export default defineConfig(({ mode }) => {
         '/api': {
           target: env.VITE_API_URL || 'http://localhost:5000',
           changeOrigin: true,
-          // Don't rewrite the path since the backend expects /api prefix
-          rewrite: (path) => path.replace(/^\/api/, '/api')
+          // Properly strip the /api prefix because it's already in the target URL
+          rewrite: (path) => path.replace(/^\/api/, '')
         }
       }
     },

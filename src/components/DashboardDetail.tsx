@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import './DashboardDetail.css';
 import { jobSets } from '../data';
+import { getStudentById } from '../api';
 
 function getJobTitleById(jobId: string, gender: string): string {
     const setPrefix = jobId.split('-')[0]; 
@@ -31,7 +31,6 @@ type Student = {
 
 export function DashboardDetail() {
     const [student, setStudent] = useState<Student | null>(null);
-    const URL = import.meta.env.VITE_API_URL;
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const { id } = useParams(); 
@@ -40,8 +39,8 @@ export function DashboardDetail() {
     useEffect(() => {
         const fetchStudent = async () => {
           try {
-            const response = await axios.get(`${URL}/students/${id}/references`);
-            setStudent(response.data);
+            const data = await getStudentById(id || '');
+            setStudent(data);
             setError(null);
           } catch (err: any) {
             setError(err.message || 'Gagal mengambil data siswa');

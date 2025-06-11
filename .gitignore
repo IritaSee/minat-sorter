@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+DEPLOYMENT-CHECKLIST.md
+.env
+README-deployment.md

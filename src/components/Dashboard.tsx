@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import './Dashboard.css';
 import { useNavigate } from 'react-router-dom';
+import { getStudents } from '../api';
 
 type Student = {
   studentInfo: {
@@ -19,7 +19,6 @@ type Student = {
 
 export function Dashboard() {
     const [students, setStudents] = useState<Student[]>([]);
-    const URL = import.meta.env.VITE_API_URL;
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
@@ -28,8 +27,8 @@ export function Dashboard() {
         const fetchStudents = async () => {
             try {
             setIsLoading(true);
-            const response = await axios.get(`${URL}/students/`);
-            setStudents(response.data);
+            const data = await getStudents();
+            setStudents(data);
             setError(null); 
             } catch (err: any) {
             setError(err.message || 'Gagal mengambil data');
